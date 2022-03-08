@@ -1,4 +1,5 @@
 const mongoose =  require('../database')
+const { stringify } = require('nodemon/lib/utils')
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -21,6 +22,6 @@ const UserSchema = new mongoose.Schema({
         default: Date.new
     },
 })
-const User = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', UserSchema)
 
 module.exports = User
