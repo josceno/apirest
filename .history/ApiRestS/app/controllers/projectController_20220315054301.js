@@ -1,8 +1,8 @@
 const express = require('express')
 const authMiddleware = require('../middleware/auth')
 
-const Project = require('../models/project')
-const Task = require('../models/task')
+const Project = require('../models/Projects')
+const Task = require('../models/Task')
 
 const router = express.Router()
 
@@ -27,11 +27,12 @@ router.get('/:projectId',async (req,res)=>{
 })
 router.post('/', async (req,res)=>{
     try {
+        
         const {title, description, tasks} = req.body;
         const project = await Project.create({title, description, user: req.userId});
         console.log(title)
         console.log(tasks)
-       await Promise.all(tasks.map(async task=>{
+       await Promise.all(project.tasks.map(async task=>{
             const projectTask = new Task({...task, project: project._id})
            
             await projectTask.save()

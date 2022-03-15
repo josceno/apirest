@@ -1,8 +1,8 @@
 const express = require('express')
 const authMiddleware = require('../middleware/auth')
 
-const Project = require('../models/project')
-const Task = require('../models/task')
+const Project = require('../models/Projects')
+const Task = require('../models/Task')
 
 const router = express.Router()
 
@@ -27,18 +27,7 @@ router.get('/:projectId',async (req,res)=>{
 })
 router.post('/', async (req,res)=>{
     try {
-        const {title, description, tasks} = req.body;
-        const project = await Project.create({title, description, user: req.userId});
-        console.log(title)
-        console.log(tasks)
-       await Promise.all(tasks.map(async task=>{
-            const projectTask = new Task({...task, project: project._id})
-           
-            await projectTask.save()
-
-           project.tasks.push(projectTask)
-        }))
-        await project.save()
+        const project = await Project.create({... req.body, user: req.userId, title: req.title});
         console.log(req.body)
         console.log({project})
         return res.send(project)
@@ -54,7 +43,7 @@ router.delete('/:projectId', async (req,res)=>{
     try {
         const project = await Project.findByIdAndRemove(req.params.projectId).populate('user')
 
-        return res.send()
+        return res.send({project})
     } catch (err) {
         return res.status(400).send({error: 'Error cannot delete project'})
         
